@@ -266,12 +266,12 @@ int MySQL_fetch_row(MYSQL_RES **result, ...)                                    
 #ifdef cob_c8_t  // for GnuCobol 2.xx  20140518
     maxcols = min(cob_call_params, mysql_num_fields(*result));
 #else
-    maxcols = min(cob_call_parameters - 1, mysql_num_fields(*result)); //121609
+    maxcols = min(cob_call_params - 1, mysql_num_fields(*result)); //121609
 #endif
     for(j=0; j<maxcols; j++)                                                           //050709
     {                                                                                  //050709
 #ifdef cob_c8_t  // for GnuCobol 2.xx  20140518
-      cob_field *cf_from_cobol = cob_current_module->cob_procedure_params[j+1];    //050709
+      cob_field *cf_from_cobol = cob_current_module->cob_procedure_parameters[j+1];    //050709
 #else
       cob_field *cf_from_cobol = cob_current_module->cob_procedure_parameters[j+1];    //050709
 #endif
@@ -329,7 +329,7 @@ int MySQL_fetch_record(MYSQL_RES **result, ...)                                 
     for(j=0; j<maxcols; j++)                                                           //121609
     {                                                                                  //121609
       //cob_field *cf_from_cobol = cob_current_module->cob_procedure_parameters[j+1];    //121609
-      cob_field *cf_from_cobol = cob_current_module->cob_procedure_params[j+1];    //121609
+      cob_field *cf_from_cobol = cob_current_module->cob_procedure_parameters[j+1];    //121609
       if(res[j] == NULL)                                                               //121609
       {                                                                                //121609
         memset(cf_from_cobol->data, 0, cf_from_cobol->size);                           //121609

@@ -1,6 +1,25 @@
 # DBPRE
 SQL precompiler for COBOL from svn checkout svn://svn.code.sf.net/p/dbpre/code/ dbpre-code
 
+# How to install dependencies 
+```txt
+sudo apt-get install libmysqlclient-dev
+```
+
+# How to compile on Linux 
+```txt
+Run compile.sh
+```
+
+#How to set openCobol IDE for MySQL
+```txt
+https://opencobolide.readthedocs.io/en/latest/advanced.html#sql-cobol-guide
+```
+
+
+
+
+
 
 Developed by the_piper@web.de
 For more infos see here: https://sourceforge.net/projects/dbpre/
@@ -8,7 +27,7 @@ For more infos see here: https://sourceforge.net/projects/dbpre/
 dbpre is a precompiler for MySql and GnuCOBOL, it uses *.scb files
 (SQL CoBol) for input and creates a *.cob file, which must be
 compiled with GnuCOBOL to create either a module or an executable program.
-
+```txt
 
 File List
 =========
@@ -33,7 +52,7 @@ PGCTBPARAM         - working storage stuff for BATCH programs / Subroutines
 PGCTBSUB           - copybook for SUBROUTINES which includes some COBOL code
 PGCTBSUBWS         - working storage stuff for Subroutines
 SQLCA              - SQL communication area
-
+```
 
 
 Requirements
