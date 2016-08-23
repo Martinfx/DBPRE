@@ -1,0 +1,16 @@
+----+-*--1-!--+----2----+----3----+----4----+----5----+----6----+----7-!--+----8
+        01  PGCTB-PARAM-BLOCK.
+          05  PGCTB-PROGRAM-NAME              PIC X(10).
+          05  FILLER                          PIC X VALUE LOW-VALUE.
+          05  PGCTB-DATE                      PIC X(10).
+          05  PGCTB-TIME                      PIC X(10).
+          05  PGCTB-STAGE                     PIC 9.
+          05  PGCTB-STATUS-FLD                PIC 9(03).
+            88 PGCTB-OK                       VALUE 0.
+            88 PGCTB-NO-DATA                  VALUE 1.
+            88 PGCTB-INVALID-INPUT            VALUE 2.
+            88 PGCTB-INVALID-REQUEST          VALUE 3.
+            88 PGCTB-ERROR                    VALUE 1 THRU 999.
+          05  PGCTB-ERROR-MESSAGE             PIC X(67).
+          05  PGCTB-ERRNO                     PIC 9(04).
+          05  PGCTB-SQLCA-PTR                 POINTER.

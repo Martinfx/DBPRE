@@ -1,0 +1,207 @@
+----+-*--1----+----2----+----3----+----4----+----5----+----6----+----7-*--+----8
+      **************************************************************************
+      *  I D E N T I F I C A T I O N   D I V I S I O N                         *
+      **************************************************************************
+        IDENTIFICATION              DIVISION.
+        PROGRAM-ID.                 PCTB003B.
+        AUTHOR.                     THE_PIPER.
+        DATE-WRITTEN.               TODAY.
+      /
+      **************************************************************************
+      *  D A T A    D I V I S I O N                                            *
+      **************************************************************************
+        DATA                        DIVISION.
+      /
+      **************************************************************************
+      *  W O R K I N G   S T O R A G E   S E C T I O N                         *
+      **************************************************************************
+        WORKING-STORAGE SECTION.
+      *
+      * The needed working storage stuff for the framework
+        COPY PGCTBPARAM.
+      *
+      * This will be displayed in the logfile at runtime
+        01  PGCTB-VERSION                    PIC  X(38) 
+            VALUE '20120426 1.0 INITIAL RELEASE'.
+      *
+        01  FIELD1.
+          05 FIELD1-NUM                      PIC  9(08).
+          05 FILLER                          PIC  X(12) VALUE SPACE.
+        01  FIELD2                           PIC  X(16).
+        01  FIELD3                           PIC  X(32).
+      *
+        01  T                                PIC  S9(9) COMP.
+      *
+      * The communication area for the database
+        EXEC SQL
+             INCLUDE SQLCA.
+        END-EXEC.
+      /
+      **************************************************************************
+      *  P R O C E D U R E   D I V I S I O N                                   *
+      **************************************************************************
+        PROCEDURE DIVISION.
+      * The framework itself, calling PGCTB-ACTION to run the users coding
+           EXEC SQL
+               INCLUDE PGCTBBAT REPLACING 'TTTTNNNB' BY 'PCTB003B'.
+           END-EXEC.
+
+      /
+      **************************************************************************
+      *  P O C T B - A C T I O N   S E C T I O N                               *
+      **************************************************************************
+        PGCTB-ACTION SECTION. 
+      *
+           DISPLAY 'In PGCTB-ACTION.'
+      *
+      *    EXEC SQL
+      *       ROLLBACK
+      *       please dont parse this...
+      *    END-EXEC
+      *
+      *
+           PERFORM DISPLAY-ALL-RECORDS
+      *
+           DISPLAY 'Delete entire table'
+      * 
+           EXEC SQL
+              DELETE
+              FROM example_table
+           END-EXEC.
+           EVALUATE TRUE
+             WHEN DB-OK
+                CONTINUE
+             WHEN OTHER
+                PERFORM DB-STATUS
+           END-EVALUATE
+      *
+           DISPLAY 'Insert new records'
+      * 
+           PERFORM VARYING T FROM 1 BY 1 UNTIL T > 10
+              MOVE T                   TO FIELD1-NUM
+              EXEC SQL
+                 INSERT 
+                 INTO example_table
+                     (
+                        FIELD1, 
+                        FIELD2, 
+                        FIELD3
+                     )
+                     VALUES
+                     (
+                         :FIELD1 ,
+                         'Value2' ,
+                         'Value3'  
+   
+                  )
+              END-EXEC.
+              EVALUATE TRUE
+                WHEN DB-OK
+                   CONTINUE
+                WHEN OTHER
+                   PERFORM DB-STATUS
+              END-EVALUATE
+           END-PERFORM   
+      *
+           PERFORM DISPLAY-ALL-RECORDS
+      * 
+           DISPLAY 'Update the first record'
+      * 
+
+           EXEC SQL
+              UPDATE example_table
+              SET FIELD1 = 'UpdatedValue1'
+              WHERE FIELD1 = '00000001'
+           END-EXEC.
+      * 
+           DISPLAY 'Update the third record'
+      * 
+
+           EXEC SQL
+              UPDATE example_table
+              SET FIELD1 = 'UpdatedValue3'
+              WHERE FIELD1 = '00000003'
+           END-EXEC.
+      *    DISPLAY 'SQLCA-STATEMENT=' SQLCA-STATEMENT
+      *    DISPLAY 'SQLCODE=' SQLCODE
+      *    DISPLAY 'SQLCA-COUNT=' SQLCA-COUNT
+           EVALUATE TRUE
+             WHEN DB-OK
+                CONTINUE
+             WHEN OTHER
+                PERFORM DB-STATUS
+           END-EVALUATE
+      * 
+           PERFORM DISPLAY-ALL-RECORDS
+      * 
+           DISPLAY 'Ende PGCTB-ACTION.'
+      *
+           .
+        PGCTB-ACTION-EXIT.
+           EXIT.
+      /
+      **************************************************************************
+        DISPLAY-ALL-RECORDS SECTION. 
+      *
+            DISPLAY '-------------------------------------------'
+      * Attention !! Table name is CaSe sensitive!!!!!!!!!!!!!
+            EXEC SQL
+               DECLARE ALLROWS CURSOR FOR
+               SELECT FIELD1, FIELD2, FIELD3
+               INTO :FIELD1 :FIELD2 :FIELD3
+               FROM example_table
+            END-EXEC.
+            EVALUATE TRUE
+            WHEN DB-OK
+               CONTINUE
+            WHEN OTHER
+               PERFORM DB-STATUS
+            END-EVALUATE
+      *
+            EXEC SQL
+               OPEN ALLROWS
+            END-EXEC.
+            EVALUATE TRUE
+            WHEN DB-OK
+               CONTINUE
+            WHEN DB-NOT-FOUND
+               CONTINUE
+            WHEN OTHER
+               PERFORM DB-STATUS
+            END-EVALUATE
+
+            DISPLAY  'FIELD1=' FIELD1 ' FIELD2=' FIELD2 
+                     ' FIELD3=' FIELD3
+          
+            PERFORM UNTIL NOT DB-OK
+               EXEC SQL
+                  FETCH ALLROWS
+                  INTO :FIELD1 :FIELD2 :FIELD3
+               END-EXEC.
+               EVALUATE TRUE
+                 WHEN DB-OK
+                     DISPLAY  'FIELD1=' FIELD1 ' FIELD2=' FIELD2 
+                           ' FIELD3=' FIELD3
+                 WHEN DB-NOT-FOUND
+                    MOVE SPACE             TO FIELD1
+                    MOVE SPACE             TO FIELD2
+                    MOVE SPACE             TO FIELD3
+                 WHEN OTHER
+                    PERFORM DB-STATUS
+               END-EVALUATE
+            END-PERFORM
+            SET DB-OK                      TO TRUE
+            DISPLAY '-------------------------------------------'
+      *
+            EXEC SQL
+               CLOSE ALLROWS
+            END-EXEC.
+            EVALUATE TRUE
+            WHEN DB-OK
+               CONTINUE
+            WHEN OTHER
+               PERFORM DB-STATUS
+            END-EVALUATE
+           .
+        DISPLAY-ALL-RECORDS-EXIT.
+           EXIT.

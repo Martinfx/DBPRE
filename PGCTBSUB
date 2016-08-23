@@ -1,0 +1,88 @@
+                                                 PGCTB-PARAM-BLOCK
+                                                                 .
+      *     This is the dot to end the USING statement           ^
+----+-*--1-!--+----2----+----3----+----4----+----5----+----6----+----7-!--+----8
+      *
+           MOVE 'TTTTNNNS'                  TO PGCTB-PROGRAM-NAME
+           SET ADDRESS OF SQLCA             TO PGCTB-SQLCA-PTR
+      *
+      * Now execute the user's code
+           PERFORM PGCTB-ACTION
+      *
+      *    DISPLAY 'After PGCTB-ACTION (subroutine)'
+      * Any errors?
+           PERFORM DB-STATUS
+      *
+      *    DISPLAY 'Before GOBACK (subroutine)'
+           .
+       PGCTB-MAIN-EXIT.    
+           GOBACK.
+      /
+      *************************************************************************
+       PGCTB-STATUS SECTION.
+           IF PGCTB-ERROR
+              IF PGCTB-ERROR-MESSAGE = SPACES
+                 STRING PGCTB-PROGRAM-NAME    DELIMITED BY SIZE
+                        ': PGCTB-STATUS-FLD ' DELIMITED BY SIZE
+                         PGCTB-STATUS-FLD     DELIMITED BY SIZE
+                         ' is set!'         DELIMITED BY SIZE
+                                   INTO PGCTB-ERROR-MESSAGE
+              END-IF
+              MOVE 2                       TO RETURN-CODE
+              GOBACK
+           END-IF
+           .
+       PGCTB-STATUS-EXIT.    
+           EXIT.    
+      *************************************************************************
+       PGCTB-DISPLAY-ERROR SECTION.
+           DISPLAY '*******************************************'
+                   '******************************'
+           DISPLAY '* E R R O R * E R R O R * E R R O R * E R R'
+                   ' O R * E R R O R * E R R O R *'
+           DISPLAY '*******************************************'
+                   '******************************'
+           DISPLAY '***                                        '
+                   '                           ***'
+           DISPLAY '** ' PGCTB-ERROR-MESSAGE ' **'
+           DISPLAY '***                                        '
+                   '                           ***'
+           DISPLAY '*******************************************'
+                   '******************************'
+           DISPLAY '* E R R O R * E R R O R * E R R O R * E R R'
+                   ' O R * E R R O R * E R R O R *'
+           DISPLAY '*******************************************'
+                   '******************************'
+           DISPLAY '*      D A T A B A S E   W O R K   U N I T '
+                   '  R O L L E D    B A C K     *'
+           DISPLAY '*******************************************'
+                   '******************************'
+           .
+       PGCTB-DISPLAY-ERROR-EXIT.    
+           EXIT.    
+      *************************************************************************
+       DB-STATUS SECTION.
+      *    DISPLAY 'In DB-STATUS, SQLCODE = ' SQLCODE
+           IF SQLCODE NOT = 0
+              CALL "MySQL_errno" USING PGCTB-ERRNO
+              END-CALL
+              DISPLAY 'ERRNO: ' PGCTB-ERRNO
+              CALL "MySQL_error" USING PGCTB-ERROR-MESSAGE
+              END-CALL
+              DISPLAY PGCTB-ERROR-MESSAGE
+              MOVE SPACES                      TO PGCTB-ERROR-MESSAGE
+              STRING  'DB-STATUS: Program '     DELIMITED BY SIZE
+                      PGCTB-PROGRAM-NAME         DELIMITED BY SIZE
+                      ' SQLCODE='             DELIMITED BY SIZE
+                      SQLCODE                  DELIMITED BY SIZE
+                      '   SQLCA-SEQUENCE='     DELIMITED BY SIZE
+                      SQLCA-SEQUENCE           DELIMITED BY SIZE
+                      ' '                      DELIMITED BY SIZE
+                                               INTO PGCTB-ERROR-MESSAGE
+              PERFORM PGCTB-DISPLAY-ERROR
+              MOVE 3                       TO RETURN-CODE
+              GOBACK
+           END-IF
+           .
+       DB-STATUS-EXIT.    
+           EXIT.    

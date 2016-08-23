@@ -1,0 +1,69 @@
+      * This stuff belongs to the WORKING-STORAGE SECTION of a BATCH program
+      * which calls subroutine PCTB004S
+      * 
+      * This stuff belongs to the LINKAGE SECTION of the SUBROUTINE
+      * PCTB004S.
+      * 
+      * This is the link between a BATCH program and a SUBROUTINE to
+      * exchange data and is used in the CALL statement like this:
+      * 
+      * *initialize the needed values in the param block
+      *  SET PCTB004-001-INIT                 TO TRUE
+      * *specify the request you want to use
+      *  SET PCTB004-001-DUMP-RECORDS         TO TRUE
+      * *and finally call the subroutine with the needed parameters
+      *  CALL PCTB004-001-CALL-ID             USING PCTB004-001-PARAM-BLOCK
+      *                                             PGCTB-PARAM-BLOCK
+      *  END-CALL
+      *  EVALUATE TRUE
+      *  WHEN PCTB004-001-OK
+      *     CONTINUE
+      *  WHEN PCTB004-001-ERROR
+      *     (do some error handling)
+      *  WHEN OTHER
+      *     PERFORM PGCTB-ERROR-SECTION
+      *  END-EVALUATE
+      * 
+      *  The name of this parameter block is PCTB004P001
+      *  which means:
+      *  
+      *  PCTB004 - it is used to call a subroutine named PCTB004S
+      *  P       - it is a parameter block, indeed
+      *  001     - a subroutine can handle more than one parameter block,
+      *            this is number 001, there can be up to 999 different
+      *            parameter blocks, which might differ in data depending
+      *            on the requests
+      *
+      * Each parameter block has a request field, like PCTB004-001-REQUEST
+      * which can have a lot of different requests, 88 values.
+      * 
+      * So it makes sense to group requests depending on the data in the
+      * parameter block, like PARAM-BLOCK 001 deals with addresses of 
+      * customers and has requests like 'FIND-CUSTOMER', 'UPDATE-CUSTOMER',
+      * 'DELETE-CUSTOMER', 'ADD-CUSTOMER', 
+      *
+      * PARAM-BLOCK 002 might deal with accounting stuff, like
+      * 'CREATE-ACCOUNT', 'ADDACCTDATA', 'UPDATE-ACCNT', 'DELETE-ACCNT'
+      *
+      * PARAM-BLOCK 003 might deal with orders, like:
+      * 'ADD-ORDER', 'LIST-ORDERS', 'DELETE-ORDER', 'PROCESS-ORDER'.
+      * 
+      * And so on. You might have got the idea behind this naming convention.
+----+-*--1-!--+----2----+----3----+----4----+----5----+----6----+----7-!--+----8
+        01  PCTB004-001-PARAM-BLOCK.
+          05  PCTB004-001-GRP.
+            06  PCTB004-001-CALL-ID           PIC X(8).
+            06  PCTB004-001-REQID             PIC 999.
+            06  PCTB004-001-VERSION           PIC 9999.
+          05  PCTB004-001-GRP-RED             REDEFINES PCTB004-001-GRP
+                                              PIC X(15).
+            88 PCTB004-001-INIT               VALUE 'PCTB004S0010001'.
+          05  PCTB004-001-REQUEST             PIC X(16).
+            88 PCTB004-001-D-A-RECORDS        VALUE 'DISPALLRECORDS  '.
+          05  PGCTB-001-DATA.
+            06 FILLER                         PIC X.
+      * Add here more data to exchange between batch program and
+      * subroutine, if needed
+            06 PCTB004-001-STATUS             PIC 999.
+              88 PCTB004-001-OK               VALUE 0.
+              88 PCTB004-001-ERROR            VALUE 999.

@@ -1,0 +1,14 @@
+
+-- Diese und die folgenden Zeilen werden ignoriert --
+
+AM   PCTB003B.param
+AM   PCTB003B.scb
+AM   PCTB003B.sh
+AM   PGCTBBATWS
+A    README.TXT
+AM   SQLCA
+AM   c
+AM   cPCTB003B
+AM   capi
+A    cobmysqlapi.c
+AM   dbpre.c

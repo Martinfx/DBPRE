@@ -1,0 +1,38 @@
+        01  SQLCA.
+          05 SQLCA-CID                     USAGE POINTER.
+          05 SQLCA-CURSOR-CTRL-GRP.
+            10 SQLCA-CURSOR-CTRL OCCURS 65 PIC X.
+          05 SQLCA-RESULT-GRP OCCURS 65.
+            10 SQLCA-RESULT                USAGE POINTER.
+          05 SQLCA-SEQUENCE                PIC 9(08).
+          05 SQLCA-COUNT                   PIC 9(08).
+          05 FILLER                        PIC X VALUE LOW-VALUE.
+          05 SQLCA-RETURN-CODE             PIC 9(03).
+          05 SQLCA-CROWCNT                 PIC X(08).
+          05 SQLCA-ROWCNT                  PIC 9(08).
+            88 SQLCA-NO-ROW                VALUE 0.
+            88 SQLCA-ONE-ROW               VALUE 1.
+            88 SQLCA-MORE-THAN-ONE-ROW     VALUE 2 THRU 99999999.
+          05 FILLER                        PIC X VALUE LOW-VALUE.
+          05 SQLCA-HOST                    PIC X(32).
+          05 FILLER                        PIC X VALUE LOW-VALUE.
+          05 SQLCA-USER                    PIC X(32).
+          05 FILLER                        PIC X VALUE LOW-VALUE.
+          05 SQLCA-PASSWD                  PIC X(32).
+          05 FILLER                        PIC X VALUE LOW-VALUE.
+          05 SQLCA-DBNAME                  PIC X(32).
+          05 FILLER                        PIC X VALUE LOW-VALUE.
+          05 SQLCA-PORT                    PIC 9(05).
+          05 FILLER                        PIC X VALUE LOW-VALUE.
+          05 SQLCA-SOCKET                  PIC X(32).
+          05 FILLER                        PIC X VALUE LOW-VALUE.
+          05 SQLCA-QUOTE                   PIC X VALUE "'".
+          05 SQLCA-CARD                    PIC X(80).
+          05 SQLCA-STATEMENT.
+            10 SQLCA-STAT-LINE OCCURS 80   PIC X(25).
+          05 FILLER                        PIC X VALUE LOW-VALUE.
+          05 SQLCODE                       PIC 9(03).
+            88 DB-OK                       VALUE 0.
+            88 DB-CURSOR-ALREADY-OPEN      VALUE -1.
+            88 DB-CURSOR-NOT-OPEN          VALUE -2.
+            88 DB-NOT-FOUND                VALUE 100.

@@ -1,0 +1,5 @@
+dbpre PCTB004S -ts=3 -I./
+# -P = create compile listing from GnuCob
+cobc -m PCTB004S.cob -L/usr/lib/mysql -P
+###cobc -m PCTB004S.cob cobmysqlapi.o -L/usr/lib/mysql -lmysqlclient -P
+###cobc -m PCTB004S.cob cobmysqlapi.o -L/usr/lib/mysql -lmysqlclient -L
